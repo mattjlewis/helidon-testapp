@@ -1,0 +1,366 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>io.helidon.applications</groupId>
+		<artifactId>helidon-mp</artifactId>
+		<version>2.0-SNAPSHOT</version>
+		<relativePath />
+	</parent>
+
+	<groupId>uk.mattjlewis.helidon</groupId>
+	<artifactId>helidon-testapp-services</artifactId>
+	<name>Helidon Test Application - Services</name>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<java.version>11</java.version>
+		<maven.compiler.release>${java.version}</maven.compiler.release>
+
+		<!-- Plugin versions -->
+		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+
+		<!-- Library versions -->
+		<validation-api.version>2.0.2</validation-api.version>
+		<junit-jupiter.version>5.5.2</junit-jupiter.version>
+		<junit-platform.version>1.5.2</junit-platform.version>
+		<h2-database.version>1.4.200</h2-database.version>
+		<version.lib.eclipselink>2.7.5</version.lib.eclipselink>
+        <version.lib.smallrye-openapi>1.1.21-SNAPSHOT</version.lib.smallrye-openapi>
+
+		<package>uk.mattjlewis.helidon.testapp.services</package>
+		<mainClass>uk.mattjlewis.helidon.testapp.services.rest.Main</mainClass>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>jakarta.validation</groupId>
+				<artifactId>jakarta.validation-api</artifactId>
+				<version>${validation-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.h2database</groupId>
+				<artifactId>h2</artifactId>
+				<version>${h2-database.version}</version>
+			</dependency>
+			<!-- Override the EclipseLink JPA Version -->
+			<dependency>
+				<groupId>org.eclipse.persistence</groupId>
+				<artifactId>org.eclipse.persistence.jpa</artifactId>
+				<version>${version.lib.eclipselink}</version>
+			</dependency>
+			<dependency>
+				<groupId>uk.mattjlewis.helidon</groupId>
+				<artifactId>helidon-testapp-model</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.helidon.microprofile.bundles</groupId>
+			<artifactId>helidon-microprofile</artifactId>
+		</dependency>
+		
+		<!-- Security Providers -->
+		<!--
+		<dependency>
+			<groupId>io.helidon.security.providers</groupId>
+			<artifactId>helidon-security-providers-jwt</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>io.helidon.microprofile</groupId>
+			<artifactId>helidon-microprofile-oidc</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- Note automatically included as part of the Helidon MicroProfile bundle
+		<dependency>
+			<groupId>io.helidon.microprofile.jwt</groupId>
+			<artifactId>helidon-microprofile-jwt-auth</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		-->
+		<!-- Note automatically included as part of the Helidon MicroProfile bundle (via JWT-Auth)
+		<dependency>
+			<groupId>io.helidon.security</groupId>
+			<artifactId>helidon-security-annotations</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		-->
+		
+		<!-- Required for Bean Validation in Jersey JAX-RS -->
+		<dependency>
+			<groupId>org.glassfish.jersey.ext</groupId>
+			<artifactId>jersey-bean-validation</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Required for JSON-Binding -->
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-binding</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- Should it be this instead?
+		<dependency>
+			<groupId>io.helidon.media.jsonb</groupId>
+			<artifactId>helidon-media-jsonb-server</artifactId>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>jakarta.json.bind</groupId>
+			<artifactId>jakarta.json.bind-api</artifactId>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+		
+		<!-- OpenAPI -->
+		<dependency>
+			<groupId>org.eclipse.microprofile.openapi</groupId>
+			<artifactId>microprofile-openapi-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.helidon.microprofile.openapi</groupId>
+			<artifactId>helidon-microprofile-openapi</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss</groupId>
+			<artifactId>jandex</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- Helidon integrations -->
+		<dependency>
+			<groupId>io.helidon.integrations.cdi</groupId>
+			<artifactId>helidon-integrations-cdi-jta-weld</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.helidon.integrations.cdi</groupId>
+			<artifactId>helidon-integrations-cdi-jpa</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.helidon.integrations.cdi</groupId>
+			<artifactId>helidon-integrations-cdi-eclipselink</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.helidon.integrations.cdi</groupId>
+			<artifactId>helidon-integrations-cdi-datasource-hikaricp</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<!-- H2 JDBC Service Provider -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Provided APIs -->
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>javax.activation-api</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.transaction</groupId>
+			<artifactId>javax.transaction-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>uk.mattjlewis.helidon</groupId>
+			<artifactId>helidon-testapp-model</artifactId>
+		</dependency>
+		
+		<!-- Testing -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-commons</artifactId>
+			<version>${junit-platform.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.helidon.microprofile.rest-client</groupId>
+			<artifactId>helidon-microprofile-rest-client</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>${maven-dependency-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>com.ethlo.persistence.tools</groupId>
+					<artifactId>eclipselink-maven-plugin</artifactId>
+					<version>${version.lib.eclipselink}</version>
+					<dependencies>
+						<dependency>
+							<groupId>javax.annotation</groupId>
+							<artifactId>javax.annotation-api</artifactId>
+							<version>${version.lib.annotation-api}</version>
+						</dependency>
+						<dependency>
+							<groupId>javax.xml.bind</groupId>
+							<artifactId>jaxb-api</artifactId>
+							<version>${version.lib.jaxb-api}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+				<!-- This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<!-- Added to stop Eclipse incorrectly flagging this as an error. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.jboss.jandex
+										</groupId>
+										<artifactId>
+											jandex-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.0.6,)
+										</versionRange>
+										<goals>
+											<goal>jandex</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.shared</groupId>
+						<artifactId>maven-dependency-analyzer</artifactId>
+						<version>1.11.1</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>copy-libs</id>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId> 
+				<configuration>
+					<classpathDependencyExcludes>
+						<!-- Ignore the Helidon OIDC dependency when testing -->
+						<classpathDependencyExclude>io.helidon.microprofile:helidon-microprofile-oidc</classpathDependencyExclude> 
+					</classpathDependencyExcludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jboss.jandex</groupId>
+				<artifactId>jandex-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>make-index</id>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.ethlo.persistence.tools</groupId>
+				<artifactId>eclipselink-maven-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>javax.annotation</groupId>
+						<artifactId>javax.annotation-api</artifactId>
+						<version>${version.lib.annotation-api}</version>
+					</dependency>
+					<dependency>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
+						<version>${version.lib.jaxb-api}</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>weave</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>weave</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>modelgen</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>modelgen</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
