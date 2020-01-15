@@ -36,7 +36,7 @@
 		<version.lib.eclipselink>2.7.5</version.lib.eclipselink>
         <version.lib.smallrye-openapi>1.1.21-SNAPSHOT</version.lib.smallrye-openapi>
 
-		<package>uk.mattjlewis.helidon.testapp.services</package>
+		<!-- <package>uk.mattjlewis.helidon.testapp.services</package> -->
 		<mainClass>uk.mattjlewis.helidon.testapp.services.rest.Main</mainClass>
 	</properties>
 
@@ -327,6 +327,14 @@
 						<id>make-index</id>
 					</execution>
 				</executions>
+				<configuration>
+					<verbose>true</verbose>
+					<fileSets>
+						<fileSet>
+							<directory>../model/target/classes</directory>
+						</fileSet>
+					</fileSets>
+				</configuration>
 			</plugin>
 
 			<plugin>
