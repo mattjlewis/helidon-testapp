@@ -28,11 +28,13 @@
 		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
 		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
 		<exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+		<version.plugin.jandex>1.0.7</version.plugin.jandex>
 
 		<!-- Library versions -->
 		<version.lib.smallrye-openapi>1.1.21-SNAPSHOT</version.lib.smallrye-openapi>
 		<helidon-testapp-services.version>0.1-SNAPSHOT</helidon-testapp-services.version>
         <version.lib.smallrye-openapi>1.1.21-SNAPSHOT</version.lib.smallrye-openapi>
+		<version.lib.jandex>2.1.2.Final</version.lib.jandex>
 
 		<!-- Packaging -->
 		<libs.classpath.prefix>libs</libs.classpath.prefix>

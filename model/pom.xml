@@ -26,12 +26,25 @@
 		
 		<!-- Plugin versions -->
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		
+		<!-- Library versions -->
+		<version.lib.jakarta-persistence>2.2.3</version.lib.jakarta-persistence>
 	</properties>
 	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.eclipse.persistence</groupId>
+				<artifactId>jakarta.persistence</artifactId>
+				<version>${version.lib.jakarta-persistence}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
-			<groupId>jakarta.persistence</groupId>
-			<artifactId>jakarta.persistence-api</artifactId>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>jakarta.persistence</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>jakarta.json.bind</groupId>
@@ -50,6 +63,11 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+				</plugin>
 				<plugin>
 					<groupId>com.ethlo.persistence.tools</groupId>
 					<artifactId>eclipselink-maven-plugin</artifactId>
@@ -71,8 +89,8 @@
 		</pluginManagement>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
 			</plugin>
 
 			<plugin>

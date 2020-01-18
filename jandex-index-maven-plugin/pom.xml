@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>uk.mattjlewis.helidon.testapp</groupId>
+	<artifactId>jandex-index-maven-plugin</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>maven-plugin</packaging>
+
+	<name>Maven plugin to create a Jandex Index</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<java.version>11</java.version>
+		<maven.compiler.release>${java.version}</maven.compiler.release>
+
+		<!-- Plugin versions -->
+		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-plugin-plugin.version>3.6.0</maven-plugin-plugin.version>
+
+		<!-- Library versions -->
+		<version.lib.jandex>2.1.2.Final</version.lib.jandex>
+		<maven-plugin-api.version>3.6.2</maven-plugin-api.version>
+		<maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-plugin-api</artifactId>
+				<version>${maven-plugin-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss</groupId>
+				<artifactId>jandex</artifactId>
+				<version>${version.lib.jandex}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven.plugin-tools</groupId>
+				<artifactId>maven-plugin-annotations</artifactId>
+				<version>${maven-plugin-annotations.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+		</dependency>
+		<!-- dependencies to annotations -->
+		<dependency>
+			<groupId>org.apache.maven.plugin-tools</groupId>
+			<artifactId>maven-plugin-annotations</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss</groupId>
+			<artifactId>jandex</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-plugin-plugin</artifactId>
+					<version>${maven-plugin-plugin.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

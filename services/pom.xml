@@ -27,6 +27,7 @@
 		<!-- Plugin versions -->
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+		<version.plugin.jandex.index>0.1-SNAPSHOT</version.plugin.jandex.index>
 
 		<!-- Library versions -->
 		<validation-api.version>2.0.2</validation-api.version>
@@ -34,7 +35,8 @@
 		<junit-platform.version>1.5.2</junit-platform.version>
 		<h2-database.version>1.4.200</h2-database.version>
 		<version.lib.eclipselink>2.7.5</version.lib.eclipselink>
-        <version.lib.smallrye-openapi>1.1.21-SNAPSHOT</version.lib.smallrye-openapi>
+		<version.lib.smallrye-openapi>1.1.21-SNAPSHOT</version.lib.smallrye-openapi>
+		<version.lib.jandex>2.1.2.Final</version.lib.jandex>
 
 		<!-- <package>uk.mattjlewis.helidon.testapp.services</package> -->
 		<mainClass>uk.mattjlewis.helidon.testapp.services.rest.Main</mainClass>
@@ -139,7 +141,6 @@
 			<groupId>org.jboss</groupId>
 			<artifactId>jandex</artifactId>
 			<scope>runtime</scope>
-			<optional>true</optional>
 		</dependency>
 
 		<!-- Helidon integrations -->
@@ -236,6 +237,11 @@
 					<version>${maven-dependency-plugin.version}</version>
 				</plugin>
 				<plugin>
+					<groupId>uk.mattjlewis.helidon.testapp</groupId>
+					<artifactId>jandex-index-maven-plugin</artifactId>
+					<version>${version.plugin.jandex.index}</version>
+				</plugin>
+				<plugin>
 					<groupId>com.ethlo.persistence.tools</groupId>
 					<artifactId>eclipselink-maven-plugin</artifactId>
 					<version>${version.lib.eclipselink}</version>
@@ -252,8 +258,7 @@
 						</dependency>
 					</dependencies>
 				</plugin>
-				<!-- This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
+				<!-- This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
 				<!-- Added to stop Eclipse incorrectly flagging this as an error. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -264,21 +269,15 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.jboss.jandex
-										</groupId>
-										<artifactId>
-											jandex-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.0.6,)
-										</versionRange>
+										<groupId>uk.mattjlewis.helidon.testapp</groupId>
+										<artifactId>jandex-index-maven-plugin</artifactId>
+										<versionRange>0.1-SNAPSHOT,[0.1,)</versionRange>
 										<goals>
-											<goal>jandex</goal>
+											<goal>jandexindex</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -320,16 +319,20 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.jboss.jandex</groupId>
-				<artifactId>jandex-maven-plugin</artifactId>
+				<groupId>uk.mattjlewis.helidon.testapp</groupId>
+				<artifactId>jandex-index-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>make-index</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>jandexindex</goal>
+						</goals>
 					</execution>
 				</executions>
 				<configuration>
 					<verbose>true</verbose>
 					<fileSets>
+						<!-- Note the project build output directory is included by default -->
 						<fileSet>
 							<directory>../model/target/classes</directory>
 						</fileSet>

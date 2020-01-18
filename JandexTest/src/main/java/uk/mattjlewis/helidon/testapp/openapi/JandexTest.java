@@ -1,6 +1,8 @@
 package uk.mattjlewis.helidon.testapp.openapi;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.LogManager;
 
 import javax.enterprise.inject.se.SeContainer;
@@ -8,32 +10,69 @@ import javax.enterprise.inject.se.SeContainerInitializer;
 
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
+import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.IndexView;
 
 import io.helidon.microprofile.openapi.IndexBuilder;
 import uk.mattjlewis.helidon.testapp.model.Department;
 import uk.mattjlewis.helidon.testapp.openapi.model.TestModel;
+import uk.mattjlewis.helidon.testapp.services.rest.DepartmentResource;
 
 public class JandexTest {
+    private static final String INDEX_PATH = "/META-INF/jandex.idx";
+    
 	public static void main(String[] args) throws IOException {
 		setupLogging();
+		
+        try (InputStream jandexIS = new FileInputStream("../model/target/classes" + INDEX_PATH)) {
+        	IndexView iv = new IndexReader(jandexIS).read();
+			dumpIndexView("Model classes dir", iv);
+        }
+		
+        try (InputStream jandexIS = new FileInputStream("../services/target/classes" + INDEX_PATH)) {
+        	IndexView iv = new IndexReader(jandexIS).read();
+			dumpIndexView("Services classes dir", iv);
+        }
+		
+        try (InputStream jandexIS = DepartmentResource.class.getResourceAsStream(INDEX_PATH)) {
+        	IndexView iv = new IndexReader(jandexIS).read();
+			dumpIndexView("DepartmentResource.class", iv);
+        }
+		
+        try (InputStream jandexIS = Department.class.getResourceAsStream(INDEX_PATH)) {
+        	IndexView iv = new IndexReader(jandexIS).read();
+			dumpIndexView("Department.class", iv);
+        }
+		
+        try (InputStream jandexIS = TestModel.class.getResourceAsStream(INDEX_PATH)) {
+        	IndexView iv = new IndexReader(jandexIS).read();
+			dumpIndexView("TestModel.class", iv);
+        }
+		
+        try (InputStream jandexIS = JandexTest.class.getResourceAsStream(INDEX_PATH)) {
+        	IndexView iv = new IndexReader(jandexIS).read();
+			dumpIndexView("JandexTest.class", iv);
+        }
 		
 		try (SeContainer container = SeContainerInitializer.newInstance().initialize()) {
 			IndexBuilder ib = container.getBeanManager().getExtension(IndexBuilder.class);
 			System.out.println("*** IndexBuilder instance hashCode: " + ib.hashCode());
 
 			IndexView iv = ib.indexView();
-
-			if (iv.getKnownClasses().isEmpty()) {
-				System.out.println("No known classes in the Jandex index");
-			} else {
-				System.out.println("Known classes in discovered Jandex index:");
-				iv.getKnownClasses().forEach(class_info -> System.out.println(class_info.name()));
-			}
-
-			findClass(iv, TestModel.class);
-			findClass(iv, Department.class);
+			dumpIndexView("IndexBuilder", iv);
 		}
+	}
+
+	private static void dumpIndexView(String source, IndexView iv) {
+		if (iv.getKnownClasses().isEmpty()) {
+			System.out.println("Source: " + source + ". No known classes in the Jandex index");
+		} else {
+			System.out.println("Source: " + source + ". Known classes in discovered Jandex index:");
+			iv.getKnownClasses().forEach(class_info -> System.out.println(class_info.name()));
+		}
+
+		findClass(iv, Department.class);
+		findClass(iv, TestModel.class);
 	}
 
 	private static void findClass(IndexView iv, Class<?> clz) {
