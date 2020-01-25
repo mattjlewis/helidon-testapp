@@ -19,13 +19,14 @@ import io.helidon.security.annotations.Authorized;
 @Path("protected")
 @SuppressWarnings("static-method")
 @Authenticated
-@Produces(MediaType.TEXT_HTML)
+@Produces(MediaType.TEXT_PLAIN)
 @DenyAll
 public class ProtectedResource {
 	@GET
 	@Authorized(false)
 	public String securityContextTest(@Context SecurityContext context) {
 		Subject sub = context.user().get();
+		
 		var grants = sub.grants(Grant.class);
 		if (grants == null || grants.isEmpty()) {
 			System.out.println("No grants for class " + Grant.class);
@@ -33,32 +34,20 @@ public class ProtectedResource {
 			System.out.println("Grants for Grant.class:");
 			grants.forEach(System.out::println);
 		}
-		return "<html><body><h1>Protected Resource</h1>"
-				+ "<h2>Security Context</h2>"
-				+ "<ul>"
-				+ "<li>Id: " + context.id() + "</li>"
-				+ "<li>Username: " + context.userName() + "</li>"
-				+ "<li>Service name: " + context.serviceName() + "</li>"
-				+ "<li>Has role 'Application/HelidonTxTestSP': " + context.isUserInRole("Application/HelidonTxTestSP") + "</li>"
-				+ "<li>Has role 'Application/user': " + context.isUserInRole("Application/user") + "</li>"
-				+ "<li>Has role 'Internal/everyone': " + context.isUserInRole("Internal/everyone") + "</li>"
-				+ "<li>Has role 'HelidonTxTestUser': " + context.isUserInRole("HelidonTxTestUser") + "</li>"
-				+ "<li>Has role 'admin': " + context.isUserInRole("admin") + "</li>"
-				+ "<li>Has role 'user': " + context.isUserInRole("user") + "</li>"
-				+ "<li>User Subject: " + context.user().get() + "</li>"
-				+ "<li>User Principle: " + context.userPrincipal().get() + "</li>"
-				+ "<li>ABAC Attribute Names: " + context.userPrincipal().get().abacAttributeNames() + "</li>"
-				+ "</ul>"
-				+ "<h2>Links</h2>"
-				+ "<ul>"
-				+ "<li><a href=\"protected/applicationHelidon\">Application/HelidonTxTestSP</a></li>"
-				+ "<li><a href=\"protected/applicationUser\">Application/user</a></li>"
-				+ "<li><a href=\"protected/everyone\">Internal/everyone</a></li>"
-				+ "<li><a href=\"protected/helidonTxTestUser\">HelidonTxTestUser</a></li>"
-				+ "<li><a href=\"protected/admin\">admin</a></li>"
-				+ "<li><a href=\"protected/user\">user</a></li>"
-				+ "</ul>"
-				+ "</body></html>";
+		
+		return "Protected Resource\n"
+				+ "Id: " + context.id() + "\n"
+				+ "Username: " + context.userName() + "\n"
+				+ "Service name: " + context.serviceName() + "\n"
+				+ "User Subject: " + context.user().get() + "\n"
+				+ "User Principle: " + context.userPrincipal().get() + "\n"
+				+ "Has role 'Application/HelidonTxTestSP': " + context.isUserInRole("Application/HelidonTxTestSP") + "\n"
+				+ "Has role 'Application/user': " + context.isUserInRole("Application/user") + "\n"
+				+ "Has role 'Internal/everyone': " + context.isUserInRole("Internal/everyone") + "\n"
+				+ "Has role 'HelidonTxTestUser': " + context.isUserInRole("HelidonTxTestUser") + "\n"
+				+ "Has role 'admin': " + context.isUserInRole("admin") + "\n"
+				+ "Has role 'user': " + context.isUserInRole("user") + "\n"
+				+ "ABAC Attribute Names: " + context.userPrincipal().get().abacAttributeNames();
 	}
 
 	@GET
@@ -66,7 +55,7 @@ public class ProtectedResource {
 	@Authorized
 	@RolesAllowed("Application/HelidonTxTestSP")
 	public String applicationHelidon(@Context SecurityContext context) {
-		return "<html><body><h1>Authorised</h1><p>User: " + context.userName() + "</p></body></html>";
+		return "User '" + context.userName() + "' has role Application/HelidonTxTestSP";
 	}
 
 	@GET
@@ -74,7 +63,7 @@ public class ProtectedResource {
 	@Authorized
 	@RolesAllowed("Application/user")
 	public String applicationUser(@Context SecurityContext context) {
-		return "<html><body><h1>Authorised</h1><p>User: " + context.userName() + "</p></body></html>";
+		return "User '" + context.userName() + "' has role Application/user";
 	}
 
 	@GET
@@ -82,7 +71,7 @@ public class ProtectedResource {
 	@Authorized
 	@RolesAllowed("Internal/everyone")
 	public String everyone(@Context SecurityContext context) {
-		return "<html><body><h1>Authorised</h1><p>User: " + context.userName() + "</p></body></html>";
+		return "User '" + context.userName() + "' has role Internal/everyone";
 	}
 
 	@GET
@@ -90,7 +79,7 @@ public class ProtectedResource {
 	@Authorized
 	@RolesAllowed("HelidonTxTestUser")
 	public String helidonTxTestUser(@Context SecurityContext context) {
-		return "<html><body><h1>Authorised</h1><p>User: " + context.userName() + "</p></body></html>";
+		return "User '" + context.userName() + "' has role HelidonTxTestUser";
 	}
 
 	@GET
@@ -98,8 +87,7 @@ public class ProtectedResource {
 	@Authorized
 	@RolesAllowed("admin")
 	public String adminRole(@Context SecurityContext context) {
-		System.out.println(">>> ProtectedResource::adminRole()");
-		return "<html><body><h1>Authorised</h1><p>User: " + context.userName() + "</p></body></html>";
+		return "User '" + context.userName() + "' has role admin";
 	}
 
 	@GET
@@ -107,7 +95,6 @@ public class ProtectedResource {
 	@Authorized
 	@RolesAllowed("user")
 	public String userRole(@Context SecurityContext context) {
-		System.out.println(">>> ProtectedResource::userRole()");
-		return "<html><body><h1>Authorised</h1><p>User: " + context.userName() + "</p></body></html>";
+		return "User '" + context.userName() + "' has role user";
 	}
 }

@@ -59,7 +59,7 @@ public class DepartmentResource {
 		Department dept = departmentService.create(department);
 		return Response.created(createLocation(uriInfo, dept)).lastModified(dept.getLastUpdated()).entity(dept).build();
 	}
-	
+
 	@GET
 	public Response getAll() {
 		System.out.println(">>> getAll()");
@@ -99,7 +99,7 @@ public class DepartmentResource {
 		Department dept = departmentService.update(department);
 		return Response.ok(dept).location(createLocation(uriInfo, department)).build();
 	}
-	
+
 	@DELETE
 	@Path("{id}")
 	public Response deleteDepartment(@PathParam("id") int id) {

@@ -24,6 +24,8 @@ import uk.mattjlewis.helidon.testapp.model.Employee;
 
 @SuppressWarnings("static-method")
 public class DepartmentRestClientTest extends HelidonTestBase {
+	private static final String DEPARTMENT_PATH = "department";
+
 	@Test
 	public void restClientDepartmentTest() {
 		Client client = ClientBuilder.newClient();
@@ -36,7 +38,7 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 				new Employee("Fred", "fred@test.org", "Beer"));
 		Department dept = new Department("IT", "London", employees);
 		Department created_dept = null;
-		try (Response response = root.path("department").request(MediaType.APPLICATION_JSON).post(Entity.json(dept))) {
+		try (Response response = root.path(DEPARTMENT_PATH).request(MediaType.APPLICATION_JSON).post(Entity.json(dept))) {
 			if (response.getStatus() != Response.Status.CREATED.getStatusCode()) {
 				fail("Unexpected response status: " + response.getStatus());
 			}
@@ -51,7 +53,7 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 		// Find the department
 		Department found_dept = null;
 		try {
-			found_dept = root.path("department").path(created_dept.getId().toString())
+			found_dept = root.path(DEPARTMENT_PATH).path(created_dept.getId().toString())
 					.request(MediaType.APPLICATION_JSON).get(Department.class);
 			assertNotNull(found_dept);
 			assertNotNull(found_dept.getId());
@@ -68,7 +70,7 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 		// Update the department
 		found_dept.setName(dept.getName() + " - updated");
 		try {
-			Department updated_dept = root.path("department").path(created_dept.getId().toString())
+			Department updated_dept = root.path(DEPARTMENT_PATH).path(created_dept.getId().toString())
 					.request(MediaType.APPLICATION_JSON)
 					.method(HttpMethod.PATCH, Entity.json(found_dept), Department.class);
 			assertNotNull(updated_dept);
@@ -80,7 +82,7 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 
 		// Should trigger bean validation failure
 		dept = new Department("012345678901234567890123456789", "London");
-		try (Response response = root.path("department").request(MediaType.APPLICATION_JSON)
+		try (Response response = root.path(DEPARTMENT_PATH).request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(dept, MediaType.APPLICATION_JSON))) {
 			if (response.getStatus() != Response.Status.BAD_REQUEST.getStatusCode()) {
 				fail("Unexpected response status: '" + response.getStatus());
@@ -93,7 +95,7 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 				Arrays.asList(new Employee("Rod", "rod@test.org", "Water"),
 						new Employee("Jane", "jane@test.org", "012345678901234567890123456789"),
 						new Employee("Freddie", "freddie@test.org", "Tea")));
-		try (Response response = root.path("department").request(MediaType.APPLICATION_JSON)
+		try (Response response = root.path(DEPARTMENT_PATH).request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(dept, MediaType.APPLICATION_JSON))) {
 			if (response.getStatus() != Response.Status.CONFLICT.getStatusCode()) {
 				fail("Unexpected response status '" + response.getStatus());

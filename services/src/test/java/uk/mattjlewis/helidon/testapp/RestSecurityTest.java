@@ -1,5 +1,6 @@
 package uk.mattjlewis.helidon.testapp;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.ws.rs.client.Client;
@@ -17,38 +18,28 @@ public class RestSecurityTest extends HelidonTestBase {
 		Client client = ClientBuilder.newClient();
 		WebTarget root = client.target("http://" + server.host() + ":" + server.port()).path("rest");
 
-		try (Response response = root.path("protected").request(MediaType.TEXT_HTML).get()) {
-			if (response.getStatus() != Response.Status.UNAUTHORIZED.getStatusCode()) {
-				fail("Unexpected response status: " + response.getStatus());
-			}
+		try (Response response = root.path("protected").request(MediaType.TEXT_PLAIN).get()) {
+			assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
 		}
 
-		try (Response response = root.path("protected").request(MediaType.TEXT_HTML)
+		try (Response response = root.path("protected").request(MediaType.TEXT_PLAIN)
 				.header("Authorization", createHttpBasicAuthToken(USER_USERNAME, USER_PASSWORD)).get()) {
-			if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-				fail("Unexpected response status: " + response.getStatus());
-			}
+			assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 		}
 
-		try (Response response = root.path("protected/admin").request(MediaType.TEXT_HTML)
+		try (Response response = root.path("protected/admin").request(MediaType.TEXT_PLAIN)
 				.header("Authorization", createHttpBasicAuthToken(ADMIN_USERNAME, ADMIN_PASSWORD)).get()) {
-			if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-				fail("Unexpected response status: " + response.getStatus());
-			}
+			assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 		}
 
-		try (Response response = root.path("protected/admin").request(MediaType.TEXT_HTML)
+		try (Response response = root.path("protected/admin").request(MediaType.TEXT_PLAIN)
 				.header("Authorization", createHttpBasicAuthToken(USER_USERNAME, USER_PASSWORD)).get()) {
-			if (response.getStatus() != Response.Status.FORBIDDEN.getStatusCode()) {
-				fail("Unexpected response status: " + response.getStatus());
-			}
+			assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
 		}
 
-		try (Response response = root.path("protected/user").request(MediaType.TEXT_HTML)
+		try (Response response = root.path("protected/user").request(MediaType.TEXT_PLAIN)
 				.header("Authorization", createHttpBasicAuthToken(USER_USERNAME, USER_PASSWORD)).get()) {
-			if (response.getStatus() != Response.Status.OK.getStatusCode()) {
-				fail("Unexpected response status: " + response.getStatus());
-			}
+			assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 		}
 	}
 }

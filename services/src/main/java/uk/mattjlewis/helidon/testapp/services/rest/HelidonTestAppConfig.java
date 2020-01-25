@@ -16,19 +16,18 @@ import uk.mattjlewis.helidon.testapp.services.rest.exception.TransactionRollback
 
 @ApplicationScoped
 @ApplicationPath("/rest")
-@LoginConfig(
-		authMethod = "MP-JWT")
+@LoginConfig(authMethod = "MP-JWT")
 public class HelidonTestAppConfig extends Application {
 	@Override
 	public Set<Class<?>> getClasses() {
 		Set<Class<?>> classes = new HashSet<>();
-		
+
 		// Add resources (alphabetical)
 		classes.addAll(Set.of(DepartmentResource.class, ProtectedResource.class));
 		// Add exception mappers (alphabetical)
-		classes.addAll(Set.of(EntityNotFoundMapper.class,
-				NoResultMapper.class, PersistenceExceptionMapper.class, TransactionRollbackMapper.class));
-		
+		classes.addAll(Set.of(EntityNotFoundMapper.class, NoResultMapper.class, PersistenceExceptionMapper.class,
+				TransactionRollbackMapper.class));
+
 		return classes;
 	}
 }

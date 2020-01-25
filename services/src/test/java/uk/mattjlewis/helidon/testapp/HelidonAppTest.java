@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.se.SeContainer;
-import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -19,14 +17,12 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import io.helidon.microprofile.server.Server;
 import uk.mattjlewis.helidon.testapp.model.Department;
 import uk.mattjlewis.helidon.testapp.model.Employee;
 import uk.mattjlewis.helidon.testapp.services.service.DepartmentServiceInterface;
@@ -35,10 +31,7 @@ import uk.mattjlewis.helidon.testapp.services.service.qualifiers.ResourceLocal;
 
 @SuppressWarnings("static-method")
 @Dependent
-public class HelidonAppTest {
-	private static SeContainer cdiContainer;
-	private static Server server;
-
+public class HelidonAppTest extends HelidonTestBase {
 	@PersistenceUnit(unitName = "HelidonTestAppPuJta")
 	private EntityManagerFactory entityManagerFactoryJta;
 	@PersistenceUnit(unitName = "HelidonTestAppPuLocal")
@@ -57,23 +50,6 @@ public class HelidonAppTest {
 
 	private static enum DepartmentServiceType {
 		CONTAINER_MANAGED_JTA, CONTAINER_MANAGED_EMF_JTA, APP_MANAGED_RESOURCE_LOCAL;
-	}
-
-	@BeforeAll
-	public static void setup() {
-		server = Server.create().start();
-		cdiContainer = (SeContainer) CDI.current();
-	}
-
-	@AfterAll
-	public static void tearDown() {
-		if (server != null) {
-			server.stop();
-			server = null;
-		}
-		if (cdiContainer != null) {
-			cdiContainer.close();
-		}
 	}
 
 	static HelidonAppTest getSelf() {
@@ -256,14 +232,10 @@ public class HelidonAppTest {
 			//em.clear();
 			em.close();
 		}
-
-		// Create a department with an employee that breaks database constraints
-		List<Employee> employees = Arrays.asList(new Employee("Rod", "rod@test.org", "Water"),
-				new Employee("Jane", "jane@test.org", "012345678901234567890123456789"),
-				new Employee("Freddie", "freddie@test.org", "Tea"));
-		Department error_dept = new Department("HR", "Reading", employees);
-
-		// Test that the department was not created
+		
+		// Test Beans Validation
+		Department error_dept = new Department("012345678901234567890123456789", "Error");
+		// Check that this department cannot be created due to a beans validation error
 		{
 			EntityManager em = emf.createEntityManager();
 			assertNotNull(em);
@@ -273,7 +245,7 @@ public class HelidonAppTest {
 				em.persist(error_dept);
 				System.out.println("*** error_dept.getId() before commit: " + error_dept.getId());
 				tx.commit();
-				fail("Create should have failed with a database constraint violation");
+				fail("Create should have failed due to a beans validation constraint violation");
 			} catch (ConstraintViolationException cve) {
 				System.out.println("*** Beans Validation Constraint Error (expected): " + cve);
 				cve.getConstraintViolations().forEach(cv -> System.out.println(cv.getMessage()));
@@ -283,12 +255,35 @@ public class HelidonAppTest {
 					tx.rollback();
 				}
 			} catch (Exception e) {
-				System.out.println("***  Error (expected): " + e);
-				// The transaction won't actually be active as it is rolled back by the entity manager
-				if (tx.isActive()) {
-					System.out.println("*** Trying to rollback the active transaction");
-					tx.rollback();
-				}
+				fail("Unexpected Error: " + e, e);
+			} finally {
+				//em.clear();
+				em.close();
+			}
+			System.out.println("*** error_dept.getId() after close: " + error_dept.getId());
+		}
+
+		// Create a department with an employee that breaks database constraints (note the incorrect beans validation rule on Employee.favouriteDrink)
+		List<Employee> employees = Arrays.asList(new Employee("Rod", "rod@test.org", "Water"),
+				new Employee("Jane", "jane@test.org", "012345678901234567890123456789"),
+				new Employee("Freddie", "freddie@test.org", "Tea"));
+		error_dept = new Department("HR", "Reading", employees);
+
+		// Test that this department cannot be created
+		{
+			EntityManager em = emf.createEntityManager();
+			assertNotNull(em);
+			EntityTransaction tx = em.getTransaction();
+			tx.begin();
+			try {
+				em.persist(error_dept);
+				System.out.println("*** error_dept.getId() before commit: " + error_dept.getId());
+				tx.commit();
+				fail("Create should have failed due to a database constraint violation");
+			} catch (RollbackException e) {
+				System.out.println("***  Rollback error (expected): " + e);
+			} catch (Exception e) {
+				fail("Unexpected Error: " + e, e);
 			} finally {
 				//em.clear();
 				em.close();
