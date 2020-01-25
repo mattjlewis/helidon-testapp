@@ -43,21 +43,15 @@ public class DepartmentResource {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Operation(
-			summary = "Create a new department")
-	@APIResponse(
-			responseCode = "201",
+	@Operation(summary = "Create a new department")
+	@APIResponse(responseCode = "201",
 			description = "The created department",
-			content = @Content(
-					mediaType = MediaType.APPLICATION_JSON,
-					schema = @Schema(
-							type = SchemaType.OBJECT,
-							implementation = Department.class)))
+			content = @Content(mediaType = MediaType.APPLICATION_JSON,
+					schema = @Schema(type = SchemaType.OBJECT, implementation = Department.class)))
 	// FIXME I don't think PermitAll should be required here
 	@PermitAll
-	public Response create(@Context UriInfo uriInfo, @Valid @Parameter(
-			schema = @Schema(
-					implementation = Department.class)) Department department) {
+	public Response create(@Context UriInfo uriInfo,
+			@Valid @Parameter(schema = @Schema(implementation = Department.class)) Department department) {
 		System.out.println(">>> create()");
 
 		testValidateDeparmentData(department);
@@ -65,19 +59,20 @@ public class DepartmentResource {
 		Department dept = departmentService.create(department);
 		return Response.created(createLocation(uriInfo, dept)).lastModified(dept.getLastUpdated()).entity(dept).build();
 	}
+	
+	@GET
+	public Response getAll() {
+		System.out.println(">>> getAll()");
+		return Response.ok(departmentService.getAll()).build();
+	}
 
 	@GET
 	@Path("{id}")
-	@Operation(
-			summary = "Get a specific department")
-	@APIResponse(
-			responseCode = "200",
+	@Operation(summary = "Get a specific department")
+	@APIResponse(responseCode = "200",
 			description = "The department instance",
-			content = @Content(
-					mediaType = MediaType.APPLICATION_JSON,
-					schema = @Schema(
-							type = SchemaType.OBJECT,
-							implementation = Department.class)))
+			content = @Content(mediaType = MediaType.APPLICATION_JSON,
+					schema = @Schema(type = SchemaType.OBJECT, implementation = Department.class)))
 	// FIXME I don't think PermitAll should be required here
 	@PermitAll
 	public Response get(@PathParam("id") int id) {
@@ -88,16 +83,11 @@ public class DepartmentResource {
 	@PATCH
 	@Path("{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Operation(
-			summary = "Update a department")
-	@APIResponse(
-			responseCode = "200",
+	@Operation(summary = "Update a department")
+	@APIResponse(responseCode = "200",
 			description = "The department instance",
-			content = @Content(
-					mediaType = MediaType.APPLICATION_JSON,
-					schema = @Schema(
-							type = SchemaType.OBJECT,
-							implementation = Department.class)))
+			content = @Content(mediaType = MediaType.APPLICATION_JSON,
+					schema = @Schema(type = SchemaType.OBJECT, implementation = Department.class)))
 	// FIXME I don't think PermitAll should be required here
 	@PermitAll
 	public Response update(@Context UriInfo uriInfo, @Valid Department department) {
@@ -108,6 +98,15 @@ public class DepartmentResource {
 		}
 		Department dept = departmentService.update(department);
 		return Response.ok(dept).location(createLocation(uriInfo, department)).build();
+	}
+	
+	@DELETE
+	@Path("{id}")
+	public Response deleteDepartment(@PathParam("id") int id) {
+		System.out.println(">>> update()");
+
+		departmentService.delete(id);
+		return Response.noContent().build();
 	}
 
 	@POST

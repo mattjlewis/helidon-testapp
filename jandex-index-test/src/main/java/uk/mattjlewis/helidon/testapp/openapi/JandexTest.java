@@ -5,15 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.LogManager;
 
-import javax.enterprise.inject.se.SeContainer;
-import javax.enterprise.inject.se.SeContainerInitializer;
-
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexReader;
 import org.jboss.jandex.IndexView;
 
-import io.helidon.microprofile.openapi.IndexBuilder;
 import uk.mattjlewis.helidon.testapp.model.Department;
 import uk.mattjlewis.helidon.testapp.openapi.model.TestModel;
 import uk.mattjlewis.helidon.testapp.services.rest.DepartmentResource;
@@ -53,14 +49,6 @@ public class JandexTest {
         	IndexView iv = new IndexReader(jandexIS).read();
 			dumpIndexView("JandexTest.class", iv);
         }
-		
-		try (SeContainer container = SeContainerInitializer.newInstance().initialize()) {
-			IndexBuilder ib = container.getBeanManager().getExtension(IndexBuilder.class);
-			System.out.println("*** IndexBuilder instance hashCode: " + ib.hashCode());
-
-			IndexView iv = ib.indexView();
-			dumpIndexView("IndexBuilder", iv);
-		}
 	}
 
 	private static void dumpIndexView(String source, IndexView iv) {

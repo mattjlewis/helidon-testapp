@@ -17,7 +17,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
-@NamedQuery(name = "Department.findByName", query = "SELECT d from Department d where d.name = :name")
+@NamedQuery(name = "Department.findByName", query = "SELECT d FROM Department d WHERE d.name = :name")
 @SequenceGenerator(name = "DepartmentSeq", sequenceName = "DEPARTMENT_SEQ")
 public class Department extends BaseEntity {
 	@Id
@@ -37,11 +37,11 @@ public class Department extends BaseEntity {
 
 	public Department() {
 	}
-	
+
 	public Department(String name) {
 		this.name = name;
 	}
-	
+
 	public Department(String name, String location) {
 		this.name = name;
 		this.location = location;

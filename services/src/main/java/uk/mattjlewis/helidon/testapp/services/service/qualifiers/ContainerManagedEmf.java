@@ -1,4 +1,4 @@
-package uk.mattjlewis.helidon.testapp.services.service;
+package uk.mattjlewis.helidon.testapp.services.service.qualifiers;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

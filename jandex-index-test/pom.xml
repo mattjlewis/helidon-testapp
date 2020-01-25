@@ -11,8 +11,8 @@
         <relativePath/>
     </parent>
 
-	<groupId>JandexTest</groupId>
-	<artifactId>JandexTest</artifactId>
+	<groupId>uk.mattjlewis.helidon.testapp</groupId>
+	<artifactId>jandex-index-test</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 

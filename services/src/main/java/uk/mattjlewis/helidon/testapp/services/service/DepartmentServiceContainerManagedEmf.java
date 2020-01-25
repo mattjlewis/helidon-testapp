@@ -1,6 +1,7 @@
 package uk.mattjlewis.helidon.testapp.services.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -12,6 +13,8 @@ import javax.transaction.Transactional;
 
 import uk.mattjlewis.helidon.testapp.model.Department;
 import uk.mattjlewis.helidon.testapp.model.Employee;
+import uk.mattjlewis.helidon.testapp.services.jpa.BaseEntityRepository;
+import uk.mattjlewis.helidon.testapp.services.service.qualifiers.ContainerManagedEmf;
 
 @ApplicationScoped
 @ContainerManagedEmf
@@ -34,11 +37,20 @@ public class DepartmentServiceContainerManagedEmf implements DepartmentServiceIn
 			if (department.getEmployees() != null) {
 				department.getEmployees().forEach(emp -> emp.setDepartment(department));
 			}
-			Date now = new Date();
-			department.setCreated(now);
-			department.setLastUpdated(now);
-			em.persist(department);
-			return department;
+			return BaseEntityRepository.create(em, department);
+		} finally {
+			if (em != null && em.isOpen()) {
+				em.close();
+			}
+		}
+	}
+
+	@Override
+	public List<Department> getAll() {
+		EntityManager em = null;
+		try {
+			em = emf.createEntityManager();
+			return BaseEntityRepository.findAll(em, Department.class);
 		} finally {
 			if (em != null && em.isOpen()) {
 				em.close();
@@ -52,11 +64,7 @@ public class DepartmentServiceContainerManagedEmf implements DepartmentServiceIn
 		EntityManager em = null;
 		try {
 			em = emf.createEntityManager();
-			Department dept = em.find(Department.class, Integer.valueOf(id));
-			if (dept == null) {
-				throw new EntityNotFoundException("Department not found for id " + id);
-			}
-			return dept;
+			return BaseEntityRepository.findById(em, Department.class, Integer.valueOf(id));
 		} finally {
 			if (em != null && em.isOpen()) {
 				em.close();
@@ -85,9 +93,7 @@ public class DepartmentServiceContainerManagedEmf implements DepartmentServiceIn
 		EntityManager em = null;
 		try {
 			em = emf.createEntityManager();
-			department.setLastUpdated(new Date());
-			Department merged = em.merge(department);
-			return merged;
+			return BaseEntityRepository.update(em, department.getId(), department);
 		} finally {
 			if (em != null && em.isOpen()) {
 				em.close();
@@ -97,15 +103,11 @@ public class DepartmentServiceContainerManagedEmf implements DepartmentServiceIn
 
 	@Override
 	@Transactional(Transactional.TxType.REQUIRES_NEW)
-	public void remove(final int id) {
+	public void delete(final int id) {
 		EntityManager em = null;
 		try {
 			em = emf.createEntityManager();
-			Department dept = em.find(Department.class, Integer.valueOf(id));
-			if (dept == null) {
-				throw new EntityNotFoundException("Department not found for id " + id);
-			}
-			em.remove(dept);
+			BaseEntityRepository.delete(em, Department.class, Integer.valueOf(id));
 		} finally {
 			if (em != null && em.isOpen()) {
 				em.close();

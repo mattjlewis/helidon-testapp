@@ -40,7 +40,7 @@ public class Employee {
 	@JoinColumn(name = "DEPARTMENT_ID", nullable = false)
 	@JsonbTransient
 	private Department department;
-	
+
 	public Employee() {
 	}
 
@@ -74,25 +74,17 @@ public class Employee {
 		this.emailAddress = emailAddress;
 	}
 
-
-
 	public String getFavouriteDrink() {
 		return favouriteDrink;
 	}
-
-
 
 	public void setFavouriteDrink(String favouriteDrink) {
 		this.favouriteDrink = favouriteDrink;
 	}
 
-
-
 	public Department getDepartment() {
 		return department;
 	}
-
-
 
 	public void setDepartment(Department department) {
 		this.department = department;

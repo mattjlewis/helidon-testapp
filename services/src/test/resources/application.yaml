@@ -6,6 +6,8 @@ server:
     # Defaults to "/"
     context: "/web"
 
+mp.initializer.allow: true
+
 mp.jwt.verify:
   issuer: "https://localhost:9443/oauth2/token"
   # Note can be any URI with a valid scheme

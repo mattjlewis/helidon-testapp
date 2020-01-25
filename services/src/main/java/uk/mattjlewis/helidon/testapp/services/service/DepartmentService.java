@@ -1,6 +1,7 @@
 package uk.mattjlewis.helidon.testapp.services.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -12,6 +13,7 @@ import javax.transaction.Transactional;
 
 import uk.mattjlewis.helidon.testapp.model.Department;
 import uk.mattjlewis.helidon.testapp.model.Employee;
+import uk.mattjlewis.helidon.testapp.services.jpa.BaseEntityRepository;
 
 @ApplicationScoped
 @Default
@@ -31,21 +33,18 @@ public class DepartmentService implements DepartmentServiceInterface {
 		if (department.getEmployees() != null) {
 			department.getEmployees().forEach(emp -> emp.setDepartment(department));
 		}
-		Date now = new Date();
-		department.setCreated(now);
-		department.setLastUpdated(now);
-		entityManager.persist(department);
-		return department;
+		return BaseEntityRepository.create(entityManager, department);
+	}
+
+	@Override
+	public List<Department> getAll() {
+		return BaseEntityRepository.findAll(entityManager, Department.class);
 	}
 
 	@Override
 	@Transactional(Transactional.TxType.SUPPORTS)
 	public Department get(final int id) {
-		Department dept = entityManager.find(Department.class, Integer.valueOf(id));
-		if (dept == null) {
-			throw new EntityNotFoundException("Department not found for id " + id);
-		}
-		return dept;
+		return BaseEntityRepository.findById(entityManager, Department.class, Integer.valueOf(id));
 	}
 
 	@Override
@@ -58,18 +57,13 @@ public class DepartmentService implements DepartmentServiceInterface {
 	@Override
 	@Transactional(Transactional.TxType.REQUIRES_NEW)
 	public Department update(final Department department) {
-		department.setLastUpdated(new Date());
-		return entityManager.merge(department);
+		return BaseEntityRepository.update(entityManager, department.getId(), department);
 	}
 
 	@Override
 	@Transactional(Transactional.TxType.REQUIRES_NEW)
-	public void remove(final int id) {
-		Department dept = entityManager.find(Department.class, Integer.valueOf(id));
-		if (dept == null) {
-			throw new EntityNotFoundException("Department not found for id " + id);
-		}
-		entityManager.remove(dept);
+	public void delete(final int id) {
+		BaseEntityRepository.delete(entityManager, Department.class, Integer.valueOf(id));
 	}
 
 	@Override

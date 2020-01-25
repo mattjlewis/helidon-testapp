@@ -1,12 +1,10 @@
 package uk.mattjlewis.helidon.testapp;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import javax.enterprise.inject.se.SeContainer;
-import javax.enterprise.inject.se.SeContainerInitializer;
+import javax.enterprise.inject.spi.CDI;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,10 +27,8 @@ public abstract class HelidonTestBase {
 
 	@BeforeAll
 	public static void setup() {
-		cdiContainer = SeContainerInitializer.newInstance().initialize();
-		assertNotNull(cdiContainer);
-
 		server = Server.create().start();
+		cdiContainer = (SeContainer) CDI.current();
 	}
 
 	@AfterAll
@@ -43,6 +39,7 @@ public abstract class HelidonTestBase {
 		}
 		if (cdiContainer != null) {
 			cdiContainer.close();
+			cdiContainer = null;
 		}
 	}
 }

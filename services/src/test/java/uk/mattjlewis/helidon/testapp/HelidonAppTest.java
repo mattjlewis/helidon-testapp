@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.se.SeContainer;
-import javax.enterprise.inject.se.SeContainerInitializer;
+import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -29,9 +29,9 @@ import org.junit.jupiter.api.Test;
 import io.helidon.microprofile.server.Server;
 import uk.mattjlewis.helidon.testapp.model.Department;
 import uk.mattjlewis.helidon.testapp.model.Employee;
-import uk.mattjlewis.helidon.testapp.services.service.ContainerManagedEmf;
 import uk.mattjlewis.helidon.testapp.services.service.DepartmentServiceInterface;
-import uk.mattjlewis.helidon.testapp.services.service.ResourceLocal;
+import uk.mattjlewis.helidon.testapp.services.service.qualifiers.ContainerManagedEmf;
+import uk.mattjlewis.helidon.testapp.services.service.qualifiers.ResourceLocal;
 
 @SuppressWarnings("static-method")
 @Dependent
@@ -61,10 +61,8 @@ public class HelidonAppTest {
 
 	@BeforeAll
 	public static void setup() {
-		cdiContainer = SeContainerInitializer.newInstance().addBeanClasses(HelidonAppTest.class).initialize();
-		assertNotNull(cdiContainer);
-
 		server = Server.create().start();
+		cdiContainer = (SeContainer) CDI.current();
 	}
 
 	@AfterAll
@@ -354,6 +352,11 @@ public class HelidonAppTest {
 		assertEquals(employees.size(), found_dept.getEmployees().size());
 		assertEquals(dept.getEmployees().size(), found_dept.getEmployees().size());
 		assertEquals(1, found_dept.getVersion().intValue());
+		
+		// Get all departments
+		var depts = departmentService.getAll();
+		assertNotNull(depts);
+		assertEquals(1, depts.size());
 
 		// Update the department
 		found_dept.setName(dept.getName() + " - updated");
@@ -373,7 +376,7 @@ public class HelidonAppTest {
 		assertEquals(dept.getEmployees().size() + 1, found_dept.getEmployees().size());
 
 		// Cleanup
-		departmentService.remove(id.intValue());
+		departmentService.delete(id.intValue());
 
 		// Validate that the department was removed
 		try {

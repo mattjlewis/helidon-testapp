@@ -1,6 +1,7 @@
 package uk.mattjlewis.helidon.testapp.services.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -12,6 +13,8 @@ import javax.persistence.PersistenceUnit;
 
 import uk.mattjlewis.helidon.testapp.model.Department;
 import uk.mattjlewis.helidon.testapp.model.Employee;
+import uk.mattjlewis.helidon.testapp.services.jpa.BaseEntityRepository;
+import uk.mattjlewis.helidon.testapp.services.service.qualifiers.ResourceLocal;
 
 @ApplicationScoped
 @ResourceLocal
@@ -34,12 +37,9 @@ public class DepartmentServiceNonJta implements DepartmentServiceInterface {
 			if (department.getEmployees() != null) {
 				department.getEmployees().forEach(emp -> emp.setDepartment(department));
 			}
-			Date now = new Date();
-			department.setCreated(now);
-			department.setLastUpdated(now);
-			em.persist(department);
+			var created = BaseEntityRepository.create(em, department);
 			tx.commit();
-			return department;
+			return created;
 		} catch (Exception e) {
 			if (tx.isActive()) {
 				tx.rollback();
@@ -51,14 +51,23 @@ public class DepartmentServiceNonJta implements DepartmentServiceInterface {
 	}
 
 	@Override
+	public List<Department> getAll() {
+		EntityManager em = null;
+		try {
+			em = emf.createEntityManager();
+			return BaseEntityRepository.findAll(em, Department.class);
+		} finally {
+			if (em != null && em.isOpen()) {
+				em.close();
+			}
+		}
+	}
+
+	@Override
 	public Department get(final int id) {
 		EntityManager em = emf.createEntityManager();
 		try {
-			Department dept = em.find(Department.class, Integer.valueOf(id));
-			if (dept == null) {
-				throw new EntityNotFoundException("Department not found for id " + id);
-			}
-			return dept;
+			return BaseEntityRepository.findById(em, Department.class, Integer.valueOf(id));
 		} finally {
 			em.close();
 		}
@@ -81,8 +90,7 @@ public class DepartmentServiceNonJta implements DepartmentServiceInterface {
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
 		try {
-			department.setLastUpdated(new Date());
-			Department merged = em.merge(department);
+			Department merged = BaseEntityRepository.update(em, department.getId(), department);
 			tx.commit();
 			return merged;
 		} catch (Exception e) {
@@ -96,16 +104,12 @@ public class DepartmentServiceNonJta implements DepartmentServiceInterface {
 	}
 
 	@Override
-	public void remove(final int id) {
+	public void delete(final int id) {
 		EntityManager em = emf.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
 		tx.begin();
 		try {
-			Department dept = em.find(Department.class, Integer.valueOf(id));
-			if (dept == null) {
-				throw new EntityNotFoundException("Department not found for id " + id);
-			}
-			em.remove(dept);
+			BaseEntityRepository.delete(em, Department.class, Integer.valueOf(id));
 			tx.commit();
 		} catch (Exception e) {
 			if (tx.isActive()) {
@@ -161,6 +165,7 @@ public class DepartmentServiceNonJta implements DepartmentServiceInterface {
 			emp.setDepartment(null);
 			dept.getEmployees().remove(emp);
 			dept.setLastUpdated(new Date());
+			tx.commit();
 		} catch (Exception e) {
 			if (tx.isActive()) {
 				tx.rollback();

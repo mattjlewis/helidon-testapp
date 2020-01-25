@@ -87,4 +87,4 @@ javax:
         username: helidon
         password: helidon
         dataSource:
-          url: jdbc:h2:~/devel/helidon-testapp
+          url: jdbc:h2:~/devel/helidon-testapp/database

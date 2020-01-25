@@ -24,7 +24,7 @@ public class BaseEntity {
 	@Column(name = "LAST_UPDATED_BY", nullable = true)
 	@Basic(optional = true)
 	private String lastUpdatedBy;
-	
+
 	public BaseEntity() {
 	}
 
