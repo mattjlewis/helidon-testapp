@@ -20,6 +20,7 @@
     <modules>
 		<module>jandex-index-maven-plugin</module>
 		<module>jandex-index-test</module>
+		<module>cdi-extension</module>
         <module>model</module>
         <module>services</module>
     </modules>
