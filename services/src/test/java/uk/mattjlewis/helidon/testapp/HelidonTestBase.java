@@ -13,11 +13,11 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.transaction.TransactionManager;
 
+import org.jboss.weld.Container;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
 import io.helidon.microprofile.server.Server;
-import uk.mattjlewis.helidon.testapp.services.rest.Main;
 
 @Dependent
 public abstract class HelidonTestBase {
@@ -62,7 +62,8 @@ public abstract class HelidonTestBase {
 			server.stop();
 			server = null;
 		}
-		if (cdiContainer != null) {
+		
+		if (cdiContainer != null && Container.available()) {
 			cdiContainer.close();
 			cdiContainer = null;
 		}

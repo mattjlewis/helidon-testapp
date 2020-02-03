@@ -31,9 +31,8 @@
 		<version.plugin.jandex>1.0.7</version.plugin.jandex>
 
 		<!-- Library versions -->
-		<version.lib.smallrye-openapi>1.1.21-SNAPSHOT</version.lib.smallrye-openapi>
+		<!-- <version.lib.smallrye-openapi>1.1.21-SNAPSHOT</version.lib.smallrye-openapi> -->
 		<helidon-testapp-services.version>0.1-SNAPSHOT</helidon-testapp-services.version>
-        <version.lib.smallrye-openapi>1.1.21-SNAPSHOT</version.lib.smallrye-openapi>
 		<version.lib.jandex>2.1.2.Final</version.lib.jandex>
 
 		<!-- Packaging -->
