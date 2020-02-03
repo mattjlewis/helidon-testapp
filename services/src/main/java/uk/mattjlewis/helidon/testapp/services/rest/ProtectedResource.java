@@ -18,8 +18,8 @@ import io.helidon.security.annotations.Authorized;
 @ApplicationScoped
 @Path("protected")
 @SuppressWarnings("static-method")
-@Authenticated
 @Produces(MediaType.TEXT_PLAIN)
+@Authenticated
 @DenyAll
 public class ProtectedResource {
 	@GET

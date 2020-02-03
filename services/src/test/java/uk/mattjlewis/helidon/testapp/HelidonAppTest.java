@@ -16,7 +16,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 
@@ -32,10 +31,6 @@ import uk.mattjlewis.helidon.testapp.services.service.qualifiers.ResourceLocal;
 @SuppressWarnings("static-method")
 @Dependent
 public class HelidonAppTest extends HelidonTestBase {
-	@PersistenceUnit(unitName = "HelidonTestAppPuJta")
-	private EntityManagerFactory entityManagerFactoryJta;
-	@PersistenceUnit(unitName = "HelidonTestAppPuLocal")
-	private EntityManagerFactory entityManagerFactoryResourceLocal;
 	@Inject
 	private DepartmentServiceInterface departmentServiceContainerManagedJta;
 	@Inject
@@ -44,9 +39,6 @@ public class HelidonAppTest extends HelidonTestBase {
 	@Inject
 	@ResourceLocal
 	private DepartmentServiceInterface departmentServiceAppManagedResourceLocal;
-	//@Inject
-	//@RestClient
-	//private DepartmentResourceInterface restClient;
 
 	private static enum DepartmentServiceType {
 		CONTAINER_MANAGED_JTA, CONTAINER_MANAGED_EMF_JTA, APP_MANAGED_RESOURCE_LOCAL;

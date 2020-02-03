@@ -1,7 +1,6 @@
 package uk.mattjlewis.helidon.testapp;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;

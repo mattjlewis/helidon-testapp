@@ -17,13 +17,13 @@ security:
   # Defaults to false
   tracing.enabled: true
   jersey.analyzers:
-      # Defaults to true
-      jwt.secure-by-default: true
-      # Map JWT-Auth to HTTP-Basic Auth in order for the unit tests to work
-      mp-jwt-auth:
-        auth-method-mapping:
-          - key: "MP-JWT"
-            provider: "http-basic-auth"
+    # Defaults to true
+    jwt.secure-by-default: true
+    # Map JWT-Auth to HTTP-Basic Auth in order for the unit tests to work
+    mp-jwt-auth:
+      auth-method-mapping:
+        - key: "MP-JWT"
+          provider: "http-basic-auth"
   config.require-encryption: false
   providers:
     - http-basic-auth:
@@ -46,6 +46,16 @@ security:
           jwt-audience: "https://localhost:9443"
     # This is required to enable an authorisation provider that behaves correctly
     - abac:
+    - oidc:
+        client-id: "client-id"
+        client-secret: "client-secret"
+        identity-uri: "https://localhost:9443"
+        frontend-uri: "http://localhost:8080"
+        redirect-uri: "/oidc/redirect"
+        oidc-metadata-well-known: true
+        oidc-metadata-resource-path: "wso2-openid-configuration.json"
+        token-endpoint-uri: "https://localhost:9443/oauth2/token"
+        sign-jwk-resource-path: "sign-jwks.json"
   web-server:
 
 web-server:

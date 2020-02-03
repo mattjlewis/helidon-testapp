@@ -91,7 +91,6 @@ public class JandexIndexGoal extends AbstractMojo {
 	private Log log;
 
 	public JandexIndexGoal() {
-		System.out.println("JandexIndexGoal()");
 	}
 
 	private boolean isVerboseLogging() {
@@ -134,8 +133,6 @@ public class JandexIndexGoal extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		System.out.println("JandexIndexGoal::execute. verbose: " + verbose + ", classesDir: " + classesDir + ", myProp: " + myProp);
-		System.out.println("CWD: " + FileSystems.getDefault().getPath(".").toAbsolutePath());
 		if (skip) {
 			getLog().info("Jandex execution skipped.");
 			return;
@@ -144,7 +141,7 @@ public class JandexIndexGoal extends AbstractMojo {
 		final List<FileSet> file_set_list = new ArrayList<>();
 		if (fileSets != null) {
 			for (FileSet fs : fileSets) {
-				System.out.println("Configured fileSet dir: " + fs.getDirectory());
+				getLog().debug("Configured fileSet dir: " + fs.getDirectory());
 				fs.setIncludes(Collections.singletonList("**/*.class"));
 				file_set_list.add(fs);
 			}
@@ -168,12 +165,12 @@ public class JandexIndexGoal extends AbstractMojo {
 		}
 
 		final Indexer indexer = new Indexer();
-		System.out.println("Scanning...");
+		getLog().debug("Scanning...");
 		for (final FileSet fileset : file_set_list) {
 			final Path fileset_path = Paths.get(fileset.getDirectory());
-			System.out.println("Scanning " + fileset.getDirectory() + ", " + fileset_path.toAbsolutePath());
+			getLog().debug("Scanning " + fileset.getDirectory() + ", " + fileset_path.toAbsolutePath());
 			if (!fileset_path.toFile().exists()) {
-				System.out.println("[SKIP] Cannot process fileset in directory: " + fileset.getDirectory()
+				getLog().debug("[SKIP] Cannot process fileset in directory: " + fileset.getDirectory()
 						+ ". Directory " + fileset_path + " does not exist!");
 				continue;
 			}
@@ -223,9 +220,9 @@ public class JandexIndexGoal extends AbstractMojo {
 		}
 
 		// Print out the classes in the index
-		System.out.println("*** Known classes:");
+		getLog().debug("*** Known classes:");
 		for (ClassInfo class_info : index.getKnownClasses()) {
-			System.out.println(class_info.name());
+			getLog().debug(class_info.name().toString());
 		}
 	}
 }

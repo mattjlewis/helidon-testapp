@@ -37,6 +37,7 @@ public class DepartmentService implements DepartmentServiceInterface {
 	}
 
 	@Override
+	@Transactional(Transactional.TxType.SUPPORTS)
 	public List<Department> getAll() {
 		return BaseEntityRepository.findAll(entityManager, Department.class);
 	}

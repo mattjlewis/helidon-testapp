@@ -39,9 +39,7 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 		Department dept = new Department("IT", "London", employees);
 		Department created_dept = null;
 		try (Response response = root.path(DEPARTMENT_PATH).request(MediaType.APPLICATION_JSON).post(Entity.json(dept))) {
-			if (response.getStatus() != Response.Status.CREATED.getStatusCode()) {
-				fail("Unexpected response status: " + response.getStatus());
-			}
+			assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 			System.out.println("Response location: " + response.getLocation());
 			created_dept = response.readEntity(Department.class);
 			assertNotNull(created_dept);
@@ -84,9 +82,7 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 		dept = new Department("012345678901234567890123456789", "London");
 		try (Response response = root.path(DEPARTMENT_PATH).request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(dept, MediaType.APPLICATION_JSON))) {
-			if (response.getStatus() != Response.Status.BAD_REQUEST.getStatusCode()) {
-				fail("Unexpected response status: '" + response.getStatus());
-			}
+			assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
 		}
 
 		/*
@@ -97,9 +93,7 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 						new Employee("Freddie", "freddie@test.org", "Tea")));
 		try (Response response = root.path(DEPARTMENT_PATH).request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(dept, MediaType.APPLICATION_JSON))) {
-			if (response.getStatus() != Response.Status.CONFLICT.getStatusCode()) {
-				fail("Unexpected response status '" + response.getStatus());
-			}
+			assertEquals(Response.Status.CONFLICT.getStatusCode(), response.getStatus());
 		}
 		*/
 	}
