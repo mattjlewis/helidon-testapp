@@ -9,7 +9,7 @@ server:
 mp.jwt.verify:
   issuer: "https://localhost:9443/oauth2/token"
   # Note can be any URI with a valid scheme
-  publickey.location: "/Users/matt/devel/helidon-testapp/services/src/main/resources/wso2carbon.pub"
+  publickey.location: "wso2carbon.pub"
 
 security:
   properties:
