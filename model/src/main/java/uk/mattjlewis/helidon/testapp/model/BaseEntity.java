@@ -2,6 +2,8 @@ package uk.mattjlewis.helidon.testapp.model;
 
 import java.util.Date;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -10,17 +12,23 @@ import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
 @MappedSuperclass
+@Access(AccessType.FIELD)
 public class BaseEntity {
+
+  @Column(name = "VERSION", updatable = false)
 	@Version
 	private Integer version;
+
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
+	@Column(name = "CREATED", nullable = false)
 	@Basic(optional = false)
 	private Date created;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "LAST_UPDATED", nullable = false)
 	@Basic(optional = false)
 	private Date lastUpdated;
+
 	@Column(name = "LAST_UPDATED_BY", nullable = true)
 	@Basic(optional = true)
 	private String lastUpdatedBy;
