@@ -2,6 +2,8 @@ package uk.mattjlewis.helidon.testapp.model;
 
 import java.util.List;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,26 +15,34 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@Entity
+@Access(AccessType.FIELD)
+@Entity(name = "Department")
 @NamedQuery(name = "Department.findByName", query = "SELECT d FROM Department d WHERE d.name = :name")
 @SequenceGenerator(name = "DepartmentSeq", sequenceName = "DEPARTMENT_SEQ")
+@Table(name = "DEPARTMENT")
 public class Department extends BaseEntity {
+  
 	@Id
+  @Column(name = "ID", insertable = true, updatable = false, nullable = false)
 	@GeneratedValue(generator = "DepartmentSeq", strategy = GenerationType.SEQUENCE)
 	private Integer id;
-	@Column(length = 20, unique = true, nullable = false)
+
+	@Column(name = "NAME", length = 20, unique = true, nullable = false)
 	@Basic(optional = false)
 	@NotBlank
 	@Size(max = 20)
 	private String name;
-	@Column(length = 20, nullable = true)
+
+	@Column(name = "LOCATION", length = 20, nullable = true)
 	@Basic(optional = true)
 	@Size(max = 255)
 	private String location;
-	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+
+	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, targetEntity = Employee.class)
 	private List<Employee> employees;
 
 	public Department() {
@@ -50,6 +60,8 @@ public class Department extends BaseEntity {
 	public Department(String name, String location, List<Employee> employees) {
 		this.name = name;
 		this.location = location;
+    // XXX You probably want to iterate through the Employee instances
+    // here and set their Department.
 		this.employees = employees;
 	}
 

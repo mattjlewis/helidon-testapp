@@ -82,4 +82,5 @@ javax:
         username: sa
         password:
         dataSource:
-          url: jdbc:h2:mem:helidonTestApp;INIT=RUNSCRIPT FROM 'classpath:DatabaseSetup.ddl'
+           url: jdbc:h2:mem:helidonTestApp
+
