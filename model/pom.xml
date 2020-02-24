@@ -33,7 +33,7 @@
 		<version.lib.jakarta-persistence-api>2.2.2</version.lib.jakarta-persistence-api>
 		<version.lib.jakarta-validation-api>2.0.2</version.lib.jakarta-validation-api>
 		<!-- <version.lib.jsonb-api>1.0.1</version.lib.jsonb-api> -->
-		<version.lib.eclipselink>2.7.5</version.lib.eclipselink>
+		<!-- <version.lib.eclipselink>2.7.5</version.lib.eclipselink> -->
 	</properties>
 	
 	<dependencyManagement>

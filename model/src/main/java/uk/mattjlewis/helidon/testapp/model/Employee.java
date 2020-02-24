@@ -22,9 +22,8 @@ import javax.validation.constraints.Size;
 @SequenceGenerator(name = "EmployeeSeq", sequenceName = "EMPLOYEE_SEQ")
 @Table(name = "EMPLOYEE")
 public class Employee {
-  
 	@Id
-  @Column(name = "ID")
+	@Column(name = "ID")
 	@GeneratedValue(generator = "EmployeeSeq", strategy = GenerationType.SEQUENCE)
 	private Integer id;
 

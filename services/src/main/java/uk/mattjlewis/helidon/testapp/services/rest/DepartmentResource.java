@@ -1,6 +1,7 @@
 package uk.mattjlewis.helidon.testapp.services.rest;
 
 import java.net.URI;
+import java.util.List;
 
 import javax.annotation.security.PermitAll;
 import javax.enterprise.context.ApplicationScoped;
@@ -39,7 +40,7 @@ import uk.mattjlewis.helidon.testapp.services.service.DepartmentServiceInterface
 @Authorized(false)
 public class DepartmentResource {
 	@Inject
-	private DepartmentServiceInterface departmentService;
+	DepartmentServiceInterface departmentService;
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -54,7 +55,7 @@ public class DepartmentResource {
 			@Valid @Parameter(schema = @Schema(implementation = Department.class)) Department department) {
 		System.out.println(">>> create()");
 
-		testValidateDeparmentData(department);
+		testValidateDepartmentData(department);
 
 		Department dept = departmentService.create(department);
 		return Response.created(createLocation(uriInfo, dept)).lastModified(dept.getLastUpdated()).entity(dept).build();
@@ -90,9 +91,10 @@ public class DepartmentResource {
 					schema = @Schema(type = SchemaType.OBJECT, implementation = Department.class)))
 	// FIXME I don't think PermitAll should be required here
 	@PermitAll
-	public Response update(@Context UriInfo uriInfo, @Valid Department department) {
+	public Response update(@Context UriInfo uriInfo, @PathParam("id") int id, @Valid Department department) {
 		System.out.println(">>> update()");
-		var employees = department.getEmployees();
+		department.setId(Integer.valueOf(id));
+		List<Employee> employees = department.getEmployees();
 		if (employees != null && !employees.isEmpty()) {
 			employees.forEach(emp -> emp.setDepartment(department));
 		}
@@ -132,8 +134,8 @@ public class DepartmentResource {
 		return uriInfo.getAbsolutePathBuilder().path(department.getId().toString()).build();
 	}
 
-	private static void testValidateDeparmentData(@Valid Department department) {
-		var employees = department.getEmployees();
+	private static void testValidateDepartmentData(@Valid Department department) {
+		List<Employee> employees = department.getEmployees();
 		if (employees != null && !employees.isEmpty()) {
 			employees.forEach(emp -> {
 				if (emp.getFavouriteDrink() != null && emp.getFavouriteDrink().length() > 20) {

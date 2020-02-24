@@ -28,15 +28,15 @@
 			<property name="eclipselink.weaving" value="false" />
 
 			<!-- DDL generation -->
-      <property name="eclipselink.application-location" value="${project.build.directory}"/>
-      <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
-      <!--
+			<!--
+			<property name="eclipselink.application-location" value="${project.build.directory}"/>
+			<property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
+			-->
 			<property name="eclipselink.ddl-generation" value="create-or-extend-tables" />
-      -->
+			<!--
 			<property name="eclipselink.ddl-generation.output-mode" value="both" />
-      <!--
-      <property name="eclipselink.ddl-generation.output-mode" value="sql-script" />
-      -->
+			-->
+			<property name="eclipselink.ddl-generation.output-mode" value="sql-script" />
 			<property name="eclipselink.create-ddl-jdbc-file-name" value="HelidonTestAppDbCreate.ddl" />
 			<property name="eclipselink.drop-ddl-jdbc-file-name" value="HelidonTestAppDbDrop.ddl" />
 
@@ -72,15 +72,15 @@
 			<property name="eclipselink.weaving" value="false" />
 
 			<!-- DDL generation -->
-      <property name="eclipselink.application-location" value="${project.build.directory}"/>
-      <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
-      <!--
+			<!--
+			<property name="eclipselink.application-location" value="${project.build.directory}"/>
+			<property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
+			-->
 			<property name="eclipselink.ddl-generation" value="create-or-extend-tables" />
-      -->
-      <property name="eclipselink.ddl-generation.output-mode" value="both" />
-      <!--
-      <property name="eclipselink.ddl-generation.output-mode" value="sql-script" />
-      -->
+			<!--
+			<property name="eclipselink.ddl-generation.output-mode" value="both" />
+			-->
+			<property name="eclipselink.ddl-generation.output-mode" value="sql-script" />
 			<property name="eclipselink.create-ddl-jdbc-file-name" value="HelidonTestAppDbCreate.ddl" />
 			<property name="eclipselink.drop-ddl-jdbc-file-name" value="HelidonTestAppDbDrop.ddl" />
 

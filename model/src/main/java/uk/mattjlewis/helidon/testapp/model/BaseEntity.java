@@ -14,8 +14,7 @@ import javax.persistence.Version;
 @MappedSuperclass
 @Access(AccessType.FIELD)
 public class BaseEntity {
-
-  @Column(name = "VERSION", updatable = false)
+	@Column(name = "VERSION")
 	@Version
 	private Integer version;
 

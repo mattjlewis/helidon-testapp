@@ -25,9 +25,8 @@ import javax.validation.constraints.Size;
 @SequenceGenerator(name = "DepartmentSeq", sequenceName = "DEPARTMENT_SEQ")
 @Table(name = "DEPARTMENT")
 public class Department extends BaseEntity {
-  
 	@Id
-  @Column(name = "ID", insertable = true, updatable = false, nullable = false)
+	@Column(name = "ID", insertable = true, updatable = false, nullable = false)
 	@GeneratedValue(generator = "DepartmentSeq", strategy = GenerationType.SEQUENCE)
 	private Integer id;
 
@@ -42,7 +41,11 @@ public class Department extends BaseEntity {
 	@Size(max = 255)
 	private String location;
 
-	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, targetEntity = Employee.class)
+	@OneToMany(mappedBy = "department",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true,
+			fetch = FetchType.EAGER,
+			targetEntity = Employee.class)
 	private List<Employee> employees;
 
 	public Department() {
@@ -60,8 +63,8 @@ public class Department extends BaseEntity {
 	public Department(String name, String location, List<Employee> employees) {
 		this.name = name;
 		this.location = location;
-    // XXX You probably want to iterate through the Employee instances
-    // here and set their Department.
+		// XXX You probably want to iterate through the Employee instances
+		// here and set their Department.
 		this.employees = employees;
 	}
 
