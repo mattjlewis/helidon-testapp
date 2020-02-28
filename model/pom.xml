@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 	
-	<groupId>uk.mattjlewis.helidon</groupId>
+	<groupId>uk.mattjlewis.testapp</groupId>
 	<artifactId>helidon-testapp-model</artifactId>
 	<name>Helidon Test Application - Model</name>
 	<version>0.1-SNAPSHOT</version>

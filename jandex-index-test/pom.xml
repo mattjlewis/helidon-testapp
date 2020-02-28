@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-	<groupId>uk.mattjlewis.helidon.testapp</groupId>
+	<groupId>uk.mattjlewis.testapp</groupId>
 	<artifactId>jandex-index-test</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -38,14 +38,14 @@
 		<!-- Packaging -->
 		<libs.classpath.prefix>libs</libs.classpath.prefix>
 		<copied.libs.dir>${project.build.directory}/${libs.classpath.prefix}</copied.libs.dir>
-		<package>uk.mattjlewis.helidon.testapp.openapi</package>
-		<mainClass>uk.mattjlewis.helidon.testapp.openapi.JandexTest</mainClass>
+		<package>uk.mattjlewis.testapp.openapi</package>
+		<mainClass>uk.mattjlewis.testapp.openapi.JandexTest</mainClass>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>uk.mattjlewis.helidon</groupId>
+				<groupId>uk.mattjlewis.testapp</groupId>
 				<artifactId>helidon-testapp-services</artifactId>
 				<version>${helidon-testapp-services.version}</version>
 			</dependency>
@@ -70,7 +70,7 @@
 			<artifactId>jandex</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>uk.mattjlewis.helidon</groupId>
+			<groupId>uk.mattjlewis.testapp</groupId>
 			<artifactId>helidon-testapp-services</artifactId>
 		</dependency>
 	</dependencies>

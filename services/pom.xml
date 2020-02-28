@@ -11,7 +11,7 @@
 		<relativePath />
 	</parent>
 
-	<groupId>uk.mattjlewis.helidon</groupId>
+	<groupId>uk.mattjlewis.testapp</groupId>
 	<artifactId>helidon-testapp-services</artifactId>
 	<name>Helidon Test Application - Services</name>
 	<version>0.1-SNAPSHOT</version>
@@ -45,7 +45,7 @@
 		<version.lib.junit-platform>1.5.2</version.lib.junit-platform>
 
 		<!-- Packaging -->
-		<mainClass>uk.mattjlewis.helidon.testapp.services.rest.Main</mainClass>
+		<mainClass>uk.mattjlewis.testapp.services.rest.Main</mainClass>
 	</properties>
 
 	<dependencyManagement>
@@ -106,7 +106,7 @@
 			</dependency>
 
 			<dependency>
-				<groupId>uk.mattjlewis.helidon</groupId>
+				<groupId>uk.mattjlewis.testapp</groupId>
 				<artifactId>helidon-testapp-model</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -264,7 +264,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>uk.mattjlewis.helidon</groupId>
+			<groupId>uk.mattjlewis.testapp</groupId>
 			<artifactId>helidon-testapp-model</artifactId>
 		</dependency>
 
@@ -340,7 +340,7 @@
 					<version>${maven-shade-plugin.version}</version>
 				</plugin>
 				<plugin>
-					<groupId>uk.mattjlewis.helidon.testapp</groupId>
+					<groupId>uk.mattjlewis.testapp</groupId>
 					<artifactId>jandex-index-maven-plugin</artifactId>
 					<version>${version.plugin.jandex-index}</version>
 				</plugin>
@@ -367,7 +367,7 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>uk.mattjlewis.helidon.testapp</groupId>
+										<groupId>uk.mattjlewis.testapp</groupId>
 										<artifactId>jandex-index-maven-plugin</artifactId>
 										<versionRange>0.1-SNAPSHOT,[0.1,)</versionRange>
 										<goals>
@@ -451,7 +451,7 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>uk.mattjlewis.helidon.testapp</groupId>
+				<groupId>uk.mattjlewis.testapp</groupId>
 				<artifactId>jandex-index-maven-plugin</artifactId>
 				<executions>
 					<execution>

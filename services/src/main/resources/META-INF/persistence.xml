@@ -9,9 +9,9 @@
 		<jta-data-source>helidonTestAppDataSource</jta-data-source>
 		
 		<!-- Entities -->
-		<class>uk.mattjlewis.helidon.testapp.model.BaseEntity</class>
-		<class>uk.mattjlewis.helidon.testapp.model.Department</class>
-		<class>uk.mattjlewis.helidon.testapp.model.Employee</class>
+		<class>uk.mattjlewis.testapp.model.BaseEntity</class>
+		<class>uk.mattjlewis.testapp.model.Department</class>
+		<class>uk.mattjlewis.testapp.model.Employee</class>
 
 		<!-- <exclude-unlisted-classes>true</exclude-unlisted-classes> -->
 		<!-- <shared-cache-mode>NONE</shared-cache-mode> -->
@@ -53,9 +53,9 @@
 		<non-jta-data-source>helidonTestAppDataSource</non-jta-data-source>
 		
 		<!-- Entities -->
-		<class>uk.mattjlewis.helidon.testapp.model.BaseEntity</class>
-		<class>uk.mattjlewis.helidon.testapp.model.Department</class>
-		<class>uk.mattjlewis.helidon.testapp.model.Employee</class>
+		<class>uk.mattjlewis.testapp.model.BaseEntity</class>
+		<class>uk.mattjlewis.testapp.model.Department</class>
+		<class>uk.mattjlewis.testapp.model.Employee</class>
 
 		<!-- <exclude-unlisted-classes>true</exclude-unlisted-classes> -->
 		<!-- <shared-cache-mode>NONE</shared-cache-mode> -->

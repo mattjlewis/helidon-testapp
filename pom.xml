@@ -4,7 +4,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>uk.mattjlewis.helidon</groupId>
+    <groupId>uk.mattjlewis.testapp</groupId>
     <artifactId>helidon-testapp-project</artifactId>
     <name>Helidon Test Application</name>
     <version>0.1-SNAPSHOT</version>
