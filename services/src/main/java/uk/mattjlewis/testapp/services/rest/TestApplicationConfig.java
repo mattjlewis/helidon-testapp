@@ -17,7 +17,7 @@ import uk.mattjlewis.testapp.services.rest.exception.TransactionRollbackMapper;
 @ApplicationScoped
 @ApplicationPath("/rest")
 @LoginConfig(authMethod = "MP-JWT")
-public class HelidonTestAppConfig extends Application {
+public class TestApplicationConfig extends Application {
 	@Override
 	public Set<Class<?>> getClasses() {
 		Set<Class<?>> classes = new HashSet<>();

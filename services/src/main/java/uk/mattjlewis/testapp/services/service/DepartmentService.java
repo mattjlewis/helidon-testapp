@@ -19,7 +19,7 @@ import uk.mattjlewis.testapp.services.jpa.BaseEntityRepository;
 @Default
 public class DepartmentService implements DepartmentServiceInterface {
 	@PersistenceContext(unitName = "HelidonTestAppPuJta")
-	private EntityManager entityManager;
+	EntityManager entityManager;
 
 	@Override
 	public String getImplementation() {
@@ -27,7 +27,7 @@ public class DepartmentService implements DepartmentServiceInterface {
 	}
 
 	@Override
-	@Transactional(Transactional.TxType.REQUIRES_NEW)
+	@Transactional(Transactional.TxType.REQUIRED)
 	public Department create(final Department department) {
 		// Make sure the many to one relationship is set
 		if (department.getEmployees() != null) {
@@ -56,19 +56,44 @@ public class DepartmentService implements DepartmentServiceInterface {
 	}
 
 	@Override
-	@Transactional(Transactional.TxType.REQUIRES_NEW)
-	public Department update(final Department department) {
-		return BaseEntityRepository.update(entityManager, department.getId(), department);
+	@Transactional(Transactional.TxType.SUPPORTS)
+	public List<Department> search(String name) {
+		return entityManager.createNamedQuery("Department.searchByName", Department.class).setParameter("name", name)
+				.getResultList();
 	}
 
 	@Override
-	@Transactional(Transactional.TxType.REQUIRES_NEW)
+	@Transactional(Transactional.TxType.REQUIRED)
+	public Department update(final Department department) {
+		//return BaseEntityRepository.update(entityManager, department.getId(), department);
+		Department current = entityManager.find(Department.class, department.getId());
+
+		if (current == null) {
+			throw new EntityNotFoundException("Department not found with id " + department.getId());
+		}
+
+		System.out.println("current version: " + current.getVersion());
+		System.out.println("department version: " + department.getVersion());
+
+		current.setLocation(department.getLocation());
+		current.setName(department.getName());
+		current.setLastUpdated(new Date());
+		current.setVersion(department.getVersion());
+
+		// Do something about the employees?
+		//current.setEmployees(department.getEmployees());
+
+		return current;
+	}
+
+	@Override
+	@Transactional(Transactional.TxType.REQUIRED)
 	public void delete(final int id) {
 		BaseEntityRepository.delete(entityManager, Department.class, Integer.valueOf(id));
 	}
 
 	@Override
-	@Transactional(Transactional.TxType.REQUIRES_NEW)
+	@Transactional(Transactional.TxType.REQUIRED)
 	public void addEmploye(int departmentId, Employee employee) {
 		Department dept = entityManager.find(Department.class, Integer.valueOf(departmentId));
 		if (dept == null) {
@@ -83,7 +108,26 @@ public class DepartmentService implements DepartmentServiceInterface {
 	}
 
 	@Override
-	@Transactional(Transactional.TxType.REQUIRES_NEW)
+	@Transactional(Transactional.TxType.REQUIRED)
+	public void updateEmployee(int departmentId, Employee employee) {
+		Department dept = entityManager.find(Department.class, Integer.valueOf(departmentId));
+		if (dept == null) {
+			throw new EntityNotFoundException("Department not found for id " + departmentId);
+		}
+		Optional<Employee> opt_emp = dept.getEmployees().stream().filter(emp -> emp.getId().equals(employee.getId()))
+				.findFirst();
+		Employee emp = opt_emp.orElseThrow(() -> new EntityNotFoundException(
+				"No such Employee with id " + employee.getId() + " in department " + departmentId));
+		
+		emp.setEmailAddress(employee.getEmailAddress());
+		emp.setFavouriteDrink(employee.getFavouriteDrink());
+		emp.setName(employee.getName());
+
+		dept.setLastUpdated(new Date());
+	}
+
+	@Override
+	@Transactional(Transactional.TxType.REQUIRED)
 	public void removeEmployee(int departmentId, int employeeId) {
 		Department dept = entityManager.find(Department.class, Integer.valueOf(departmentId));
 		if (dept == null) {

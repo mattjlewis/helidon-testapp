@@ -85,6 +85,17 @@ public class DepartmentServiceNonJta implements DepartmentServiceInterface {
 	}
 
 	@Override
+	public List<Department> search(String name) {
+		EntityManager em = emf.createEntityManager();
+		try {
+			return em.createNamedQuery("Department.searchByName", Department.class).setParameter("name", name)
+					.getResultList();
+		} finally {
+			em.close();
+		}
+	}
+
+	@Override
 	public Department update(final Department department) {
 		EntityManager em = emf.createEntityManager();
 		EntityTransaction tx = em.getTransaction();
@@ -137,6 +148,37 @@ public class DepartmentServiceNonJta implements DepartmentServiceInterface {
 			dept.setLastUpdated(new Date());
 			// FIXME Do I need to do this?
 			//em.merge(dept);
+			tx.commit();
+		} catch (Exception e) {
+			if (tx.isActive()) {
+				tx.rollback();
+			}
+			throw e;
+		} finally {
+			em.close();
+		}
+	}
+
+	@Override
+	public void updateEmployee(int departmentId, Employee employee) {
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction tx = em.getTransaction();
+		tx.begin();
+		try {
+			Department dept = em.find(Department.class, Integer.valueOf(departmentId));
+			if (dept == null) {
+				throw new EntityNotFoundException("Department not found for id " + departmentId);
+			}
+			Optional<Employee> opt_emp = dept.getEmployees().stream().filter(emp -> emp.getId().equals(employee.getId()))
+					.findFirst();
+			Employee emp = opt_emp.orElseThrow(() -> new EntityNotFoundException(
+					"No such Employee with id " + employee.getId() + " in department " + departmentId));
+			
+			emp.setEmailAddress(employee.getEmailAddress());
+			emp.setFavouriteDrink(employee.getFavouriteDrink());
+			emp.setName(employee.getName());
+	
+			dept.setLastUpdated(new Date());
 			tx.commit();
 		} catch (Exception e) {
 			if (tx.isActive()) {

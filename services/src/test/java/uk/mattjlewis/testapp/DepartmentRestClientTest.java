@@ -8,7 +8,6 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.ws.rs.HttpMethod;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -38,10 +37,11 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 		List<Employee> employees = Arrays.asList(new Employee("Matt", "matt@test.org", "Coffee"),
 				new Employee("Fred", "fred@test.org", "Beer"));
 		Department dept = new Department("IT", "London", employees);
-		
+
 		Department created_dept;
 		URI location;
-		try (Response response = root.path(DEPARTMENT_PATH).request(MediaType.APPLICATION_JSON).post(Entity.json(dept))) {
+		try (Response response = root.path(DEPARTMENT_PATH).request(MediaType.APPLICATION_JSON)
+				.post(Entity.json(dept))) {
 			assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 			location = response.getLocation();
 			assertNotNull(location);
@@ -87,18 +87,12 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 
 		// Update the department
 		found_dept.setName(dept.getName() + " - updated");
-		try {
-			Department updated_dept = root.path(DEPARTMENT_PATH).path(found_dept.getId().toString())
-					.request(MediaType.APPLICATION_JSON)
-					.method(HttpMethod.PATCH, Entity.json(found_dept), Department.class);
-			assertNotNull(updated_dept);
-			assertEquals(created_dept.getName() + " - updated", updated_dept.getName());
-			assertEquals(created_dept.getVersion().intValue() + 1, updated_dept.getVersion().intValue());
-		} catch (WebApplicationException e) {
-			fail("Unexpected response status: " + e.getResponse().getStatus());
+		try (Response response = root.path(DEPARTMENT_PATH).request(MediaType.APPLICATION_JSON)
+				.put(Entity.json(found_dept))) {
+			assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 		}
 
-		// Make sure the department was updated
+		// Fetch the department to validate it was updated
 		try {
 			found_dept = root.path(DEPARTMENT_PATH).path(created_dept.getId().toString())
 					.request(MediaType.APPLICATION_JSON).get(Department.class);
@@ -116,15 +110,9 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 
 		// Update the department again
 		found_dept.setName(dept.getName());
-		try {
-			Department updated_dept = root.path(DEPARTMENT_PATH).path(found_dept.getId().toString())
-					.request(MediaType.APPLICATION_JSON)
-					.method(HttpMethod.PATCH, Entity.json(found_dept), Department.class);
-			assertNotNull(updated_dept);
-			assertEquals(created_dept.getName(), updated_dept.getName());
-			assertEquals(created_dept.getVersion().intValue() + 2, updated_dept.getVersion().intValue());
-		} catch (WebApplicationException e) {
-			fail("Unexpected response status: " + e.getResponse().getStatus());
+		try (Response response = root.path(DEPARTMENT_PATH).request(MediaType.APPLICATION_JSON)
+				.put(Entity.json(found_dept))) {
+			assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 		}
 
 		// Make sure the department was updated
@@ -139,15 +127,23 @@ public class DepartmentRestClientTest extends HelidonTestBase {
 			// Here simply to avoid the compiler warning about a potential null pointer access
 			return;
 		}
+	}
+
+	public void validationErrors() {
+		Client client = ClientBuilder.newClient();
+		// Required to use PATCH when using the Jersey REST client
+		client.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, Boolean.TRUE);
+		WebTarget root = client.target("http://" + server.host() + ":" + server.port()).path("rest");
 
 		// Should trigger bean validation failure
-		dept = new Department("012345678901234567890123456789", "London");
+		Department dept = new Department("012345678901234567890123456789", "London");
 		try (Response response = root.path(DEPARTMENT_PATH).request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(dept, MediaType.APPLICATION_JSON))) {
 			assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
 		}
 
-		// Should pass bean validation but trigger database constraint violation
+		// Should pass bean validation but trigger database constraint violation due to a deliberate
+		// mismatch between validation rules and database constraint on Employee favourite drink
 		dept = new Department("HR", "Reading",
 				Arrays.asList(new Employee("Rod", "rod@test.org", "Water"),
 						new Employee("Jane", "jane@test.org", "012345678901234567890123456789"),

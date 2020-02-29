@@ -88,12 +88,45 @@ public class DepartmentServiceContainerManagedEmf implements DepartmentServiceIn
 	}
 
 	@Override
+	@Transactional(Transactional.TxType.SUPPORTS)
+	public List<Department> search(String name) {
+		EntityManager em = null;
+		try {
+			em = emf.createEntityManager();
+			return em.createNamedQuery("Department.searchByName", Department.class).setParameter("name", name)
+					.getResultList();
+		} finally {
+			if (em != null && em.isOpen()) {
+				em.close();
+			}
+		}
+	}
+
+	@Override
 	@Transactional(Transactional.TxType.REQUIRES_NEW)
 	public Department update(final Department department) {
 		EntityManager em = null;
 		try {
 			em = emf.createEntityManager();
-			return BaseEntityRepository.update(em, department.getId(), department);
+			//return BaseEntityRepository.update(em, department.getId(), department);
+			Department current = em.find(Department.class, department.getId());
+
+			if (current == null) {
+				throw new EntityNotFoundException("Department not found with id " + department.getId());
+			}
+
+			System.out.println("current version: " + current.getVersion());
+			System.out.println("department version: " + department.getVersion());
+
+			current.setLocation(department.getLocation());
+			current.setName(department.getName());
+			current.setLastUpdated(new Date());
+			current.setVersion(department.getVersion());
+
+			// Do something about the employees?
+			//current.setEmployees(department.getEmployees());
+
+			return current;
 		} finally {
 			if (em != null && em.isOpen()) {
 				em.close();
@@ -131,6 +164,33 @@ public class DepartmentServiceContainerManagedEmf implements DepartmentServiceIn
 			dept.setLastUpdated(new Date());
 			// FIXME Do I need to do this?
 			//em.merge(dept);
+		} finally {
+			if (em != null && em.isOpen()) {
+				em.close();
+			}
+		}
+	}
+
+	@Override
+	@Transactional(Transactional.TxType.REQUIRED)
+	public void updateEmployee(int departmentId, Employee employee) {
+		EntityManager em = null;
+		try {
+			em = emf.createEntityManager();
+			Department dept = em.find(Department.class, Integer.valueOf(departmentId));
+			if (dept == null) {
+				throw new EntityNotFoundException("Department not found for id " + departmentId);
+			}
+			Optional<Employee> opt_emp = dept.getEmployees().stream().filter(emp -> emp.getId().equals(employee.getId()))
+					.findFirst();
+			Employee emp = opt_emp.orElseThrow(() -> new EntityNotFoundException(
+					"No such Employee with id " + employee.getId() + " in department " + departmentId));
+			
+			emp.setEmailAddress(employee.getEmailAddress());
+			emp.setFavouriteDrink(employee.getFavouriteDrink());
+			emp.setName(employee.getName());
+	
+			dept.setLastUpdated(new Date());
 		} finally {
 			if (em != null && em.isOpen()) {
 				em.close();

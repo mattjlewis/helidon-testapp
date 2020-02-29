@@ -16,11 +16,15 @@ public interface DepartmentServiceInterface {
 
 	Department findByName(final String name);
 
+	List<Department> search(String name);
+
 	Department update(final Department department);
 
 	void delete(int id);
 
 	void addEmploye(int departmentId, Employee employee);
+
+	void updateEmployee(int departmentId, Employee employee);
 
 	void removeEmployee(int departmentId, int employeeId);
 }
